@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inventory Management</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #74ebd5, #9face6);
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background: #2c3e50;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      font-size: 24px;
+      letter-spacing: 1px;
+    }
+
+    .container {
+      width: 80%;
+      margin: 20px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #2c3e50;
+    }
+
+    form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    input, button {
+      padding: 10px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    input {
+      flex: 1;
+      min-width: 150px;
+    }
+
+    button {
+      background: #2ecc71;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #27ae60;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: center;
+    }
+
+    th {
+      background: #2c3e50;
+      color: white;
+    }
+
+    .action-btn {
+      padding: 6px 12px;
+      margin: 2px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .edit-btn {
+      background: #f39c12;
+      color: white;
+    }
+
+    .edit-btn:hover {
+      background: #d68910;
+    }
+
+    .delete-btn {
+      background: #e74c3c;
+      color: white;
+    }
+
+    .delete-btn:hover {
+      background: #c0392b;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  Inventory Management System
+</header>
+
+<div class="container">
+  <h2>Add New Product</h2>
+  <form id="productForm">
+    <input type="text" id="productName" placeholder="Product Name" required>
+    <input type="number" id="productQty" placeholder="Quantity" required>
+    <input type="text" id="productSupplier" placeholder="Supplier" required>
+    <button type="submit">Add Product</button>
+  </form>
+
+  <h2>Product List</h2>
+  <table id="productTable">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Product Name</th>
+        <th>Quantity</th>
+        <th>Supplier</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Rows will appear dynamically here -->
+    </tbody>
+  </table>
+</div>
+
+<script>
+  let productId = 1;
+  const productForm = document.getElementById("productForm");
+  const productTable = document.getElementById("productTable").getElementsByTagName("tbody")[0];
+
+  productForm.addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const name = document.getElementById("productName").value;
+    const qty = document.getElementById("productQty").value;
+    const supplier = document.getElementById("productSupplier").value;
+
+    const row = productTable.insertRow();
+    row.setAttribute("data-id", productId);
+
+    row.innerHTML = `
+      <td>${productId}</td>
+      <td>${name}</td>
+      <td>${qty}</td>
+      <td>${supplier}</td>
+      <td>
+        <button class="action-btn edit-btn">Edit</button>
+        <button class="action-btn delete-btn">Delete</button>
+      </td>
+    `;
+
+    // Attach event listeners
+    row.querySelector(".delete-btn").addEventListener("click", () => row.remove());
+    row.querySelector(".edit-btn").addEventListener("click", () => editRow(row));
+
+    productId++;
+    productForm.reset();
+  });
+
+  function editRow(row) {
+    const cells = row.getElementsByTagName("td");
+    document.getElementById("productName").value = cells[1].innerText;
+    document.getElementById("productQty").value = cells[2].innerText;
+    document.getElementById("productSupplier").value = cells[3].innerText;
+
+    productForm.onsubmit = function(e) {
+      e.preventDefault();
+      cells[1].innerText = document.getElementById("productName").value;
+      cells[2].innerText = document.getElementById("productQty").value;
+      cells[3].innerText = document.getElementById("productSupplier").value;
+
+      productForm.reset();
+      productForm.onsubmit = defaultSubmit; // restore default behavior
+    };
+  }
+
+  const defaultSubmit = productForm.onsubmit;
+</script>
+
+</body>
+</html>
